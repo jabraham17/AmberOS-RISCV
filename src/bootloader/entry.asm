@@ -23,59 +23,28 @@ _start:
 	addi t5, t5, 8
 	bgeu t5, t6, 1b
 
-
-    # set mstatus
-    # set MPP(11) to 11 for machine mode
-    # set MPIE(7) to 1, matches MIE
-    # set MIE(3) to 1 for interrupt enable
-    li t0, (3 << 11) | (1 << 7) | (1 << 3)
-    csrw mstatus, t0
     # set mtvec to be a trap handler
-    la t0, m_trap_vector
+    la t0, mtrap_vector_asm
     csrw mtvec, t0
-    # init location for trap frame
-    la t0, _trap_frame_addr
-    csrw mscratch, t0
+    call enable_machine_interrupts
 
 
-    # trap return to kinit
-	la t0, kinit
-	csrw mepc, t0
-    la ra, 2f
-    mret
+    la a0, kinit
+    call switch_to_machine
 2:
-
-    # enable interrupts on mie
+    # enable interrupts on sie
     # set MSIE(3) to 1 for Int Enable for software interrupts
     # set MTIE(7) to 1 for  Int Enable for Timers interrupts
     # set MEIE(11) to 1 for Int Enable for Machine interrupts
     li t0, (1 << 3) | (1 << 7) | (1 << 11)
     csrw mie, t0
 
-    # set mstatus
-    # set MPP(11) to 11 for machine mode
-    # set MPIE(7) to 1, matches MIE
-    # set MIE(3) to 1 for interrupt enable
-    li t0, (3 << 11) | (1 << 7) | (1 << 3)
-    csrw mstatus, t0
-    # trap return to kmain
-    la t0, kmain
-	csrw mepc, t0
-    la ra, 3f
-    mret
+    call disable_supervisor_interrupts_from_machine
+
+    la a0, kmain
+    call switch_to_machine
+    # call switch_to_supervisor
 3:
 
     # halt
     j halt
-
-.section .text
-.global halt
-halt:
-    wfi
-    j halt
-
-.global asm_trap_vector
-asm_trap_vector:
-    j halt
-    mret
-

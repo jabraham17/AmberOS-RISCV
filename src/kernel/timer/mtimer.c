@@ -1,16 +1,14 @@
 #include <stdlib/types.h>
 
 
-void clear_mtimer() {
+extern void enable_mtimer_interrupts_asm();
+extern void disable_mtimer_interrupts_asm();
 
-    //unset MIE MTIE
-    __asm__ (
-        "csrr t0, mie\n\t"
-        "andi t0, t0, ~(1<<7)\n\t"
-        "csrw mie, t0\n\t"
-    );
+void mtimer_clear() {
+    disable_mtimer_interrupts_asm();
 }
-void fire_mtimer() {
+
+void mtimer_fire() {
 
     // read current mtime
     volatile uint64_t* mtime = (uint64_t*)0x0200bff8;
@@ -21,11 +19,5 @@ void fire_mtimer() {
     uint64_t fire_after = 10000000;
     *mtimecmp = current_cycles + fire_after;
 
-
-    // set MIE MTIE
-    __asm__ (
-        "csrr t0, mie\n\t"
-        "ori t0, t0, (1<<7)\n\t"
-        "csrw mie, t0\n\t"
-    );
+    enable_mtimer_interrupts_asm();
 }

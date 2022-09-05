@@ -2,7 +2,7 @@ OUTPUT_ARCH(riscv64);
 ENTRY(_start);
  
 . = 0x80000000;
- 
+
 SECTIONS {
 	/* Include entry point at start of binary */
 	.text : ALIGN(4K) {
@@ -23,7 +23,5 @@ SECTIONS {
 	}
 	.data : ALIGN(4K) {
 		*(.data);
-        PROVIDE(_trap_frame_addr = .);
-        . += 296;
 	}
 }
