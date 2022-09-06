@@ -1,6 +1,6 @@
 
 #include "custom_instruction.h"
-#include <trap/trap.h>
+#include <firmware/trap/trap.h>
 
 static uint64_t custom_instruction_handler(struct TrapFrame* trap) {
     uint64_t instruction = *(uint64_t*)(trap->mepc);

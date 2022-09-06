@@ -29,7 +29,7 @@ _start:
     call enable_machine_interrupts
 
 
-    la a0, kinit
+    la a0, minit
     call switch_to_machine
 2:
     # enable interrupts on sie
@@ -42,8 +42,8 @@ _start:
     call disable_supervisor_interrupts_from_machine
 
     la a0, kmain
-    call switch_to_machine
     # call switch_to_supervisor
+    call switch_to_machine
 3:
 
     # halt

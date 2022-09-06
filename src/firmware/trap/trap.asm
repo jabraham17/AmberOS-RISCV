@@ -1,6 +1,11 @@
 .section .text
 
 
+.global mtrap_halt
+mtrap_halt:
+    wfi
+    j mtrap_halt
+
 .global mtrap_vector_asm
 .align 4
 mtrap_vector_asm:

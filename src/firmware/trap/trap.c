@@ -1,7 +1,6 @@
 #include "trap.h"
-#include <drivers/uart/uart.h>
-#include <error/error.h>
-#include <timer/mtimer.h>
+#include <uart/uart.h>
+#include "../mtimer/mtimer.h"
 
 // there are 16 interrupts
 TrapInterruptHandler interrupt_handlers[16];
@@ -28,6 +27,8 @@ bool trap_register_exception(
     return false;
 }
 
+void mtrap_halt();
+
 static void trap_interrupt_3(__attribute__((unused)) struct TrapFrame* trap) {
     uart_printf("Machine Software Interrupt\n");
 }
@@ -40,7 +41,7 @@ static void trap_interrupt_11(__attribute__((unused)) struct TrapFrame* trap) {
 }
 static uint64_t trap_exception_2(struct TrapFrame* trap) {
     uart_printf("Illegal Instruction\n");
-    halt();
+    mtrap_halt();
     return trap->mepc;
 }
 static uint64_t trap_exception_3(struct TrapFrame* trap) {
@@ -49,22 +50,22 @@ static uint64_t trap_exception_3(struct TrapFrame* trap) {
 }
 static uint64_t trap_exception_8(struct TrapFrame* trap) {
     uart_printf("ECALL User\n");
-    halt();
+    mtrap_halt();
     return trap->mepc + 4;
 }
 static uint64_t trap_exception_9(struct TrapFrame* trap) {
     uart_printf("ECALL Supervisor\n");
-    halt();
+    mtrap_halt();
     return trap->mepc + 4;
 }
 static uint64_t trap_exception_11(struct TrapFrame* trap) {
     uart_printf("ECALL Machine\n");
-    halt();
+    mtrap_halt();
     return trap->mepc + 4;
 }
 static uint64_t trap_exception_12(struct TrapFrame* trap) {
     uart_printf("PAGE FAULT\n");
-    halt();
+    mtrap_halt();
     return trap->mepc + 4;
 }
 
@@ -98,7 +99,7 @@ uint64_t mtrap_handler(struct TrapFrame* trap) {
             interrupt_handlers[cause](trap);
         } else {
             uart_printf("Unhandled interrupt 0x%x\n", cause);
-            halt();
+            mtrap_halt();
         }
     } else {
         uint64_t cause = trap->mcause & 0xFFF;
@@ -107,7 +108,7 @@ uint64_t mtrap_handler(struct TrapFrame* trap) {
             return exception_handlers[cause](trap);
         } else {
             uart_printf("Unhandled exception 0x%x\n", cause);
-            halt();
+            mtrap_halt();
         }
     }
     return pc;

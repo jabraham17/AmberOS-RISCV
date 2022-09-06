@@ -1,5 +1,5 @@
 #include "error.h"
-#include <drivers/uart/uart.h>
+#include <uart/uart.h>
 
 
 void panic(char* msg) {

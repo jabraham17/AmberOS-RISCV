@@ -1,7 +1,10 @@
 -include $(ROOT_PROJECT_DIRECTORY)options.mk
 
 TOPTARGETS=all clean cppcheck
-SUBDIRS= bootloader kernel main
+# grep all subdirs of src, extract directory names, sort them, and extract just the basename
+SUBDIRS= $(patsubst $(ROOT_PROJECT_DIRECTORY)src/%/,%,$(sort $(dir $(wildcard $(ROOT_PROJECT_DIRECTORY)src/*/*))))
+
+.DEFAULT_GOAL: all
 
 .PHONY: $(TOPTARGETS)
 $(TOPTARGETS): $(SUBDIRS)
@@ -11,5 +14,5 @@ $(call make_prereqs)
 
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
-	@printf "$(COLOR_RED)$(COLOR_BOLD)MAKE -C src/$@ $(MAKECMDGOALS)$(COLOR_RESET)\n"
+	@printf "$(COLOR_RED)$(COLOR_BOLD)MAKE -C $@ $(MAKECMDGOALS)$(COLOR_RESET)\n"
 	@$(MAKE) --no-print-directory -C $@ $(MAKECMDGOALS)

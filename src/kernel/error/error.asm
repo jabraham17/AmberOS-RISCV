@@ -1,8 +1,5 @@
 
-
-
 .section .text
-
 
 .global halt
 halt:

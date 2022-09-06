@@ -1,3 +1,4 @@
 -include $(ROOT_PROJECT_DIRECTORY)options.mk
-TARGET=$(LIB_DIRECTORY)libbootloader.a
+LIBRARIES= $(custom_instruction)
+TARGET=$(LIB_DIRECTORY)libcustom_instruction.a
 -include $(ROOT_PROJECT_DIRECTORY)src/library.mk 

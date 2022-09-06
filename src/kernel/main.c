@@ -16,22 +16,9 @@
 //     return;
 // }
 
-#include "drivers/uart/uart.h"
-#include "timer/mtimer.h"
-#include "trap/trap.h"
-// #include "custom_instruction/custom_instruction.h"
-
-// runs in machine mode
-// last thing it does is enable virtual memory
-void kinit() {
-    uart_init();
-    trap_init();
-    // custom_instruction_init();
-}
-// extern int func(int x);
+#include <uart/uart.h>
 
 
-// runs in supervisor mode
 void kmain() {
     uart_printf("Hello world!\n");
     //      int a = func(30);

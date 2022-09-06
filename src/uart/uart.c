@@ -62,11 +62,11 @@ char uart_getc() {
     return *_RECEIVER_BUFFER_REG_RO;
 }
 
-char printf_buffer[1024];
+char uart_printf_buffer[1024];
 void uart_printf(char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    vsprintf(printf_buffer, fmt, args);
+    vsprintf(uart_printf_buffer, fmt, args);
     va_end(args);
-    uart_puts(printf_buffer);
+    uart_puts(uart_printf_buffer);
 }
